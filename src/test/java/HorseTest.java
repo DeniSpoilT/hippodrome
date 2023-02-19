@@ -77,29 +77,17 @@ public class HorseTest {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {0.8125, 0.3, 0.5489453})
-    void checkThatDistanceIsCalculatedCorrectly(double mockRandom) {
+    @CsvSource({
+            "0.8125, 5.56875",
+            "0.3, 2.75",
+            "0.5489453, 4.11919915"
+    })
+    void checkThatDistanceIsCalculatedCorrectly(double mockRandom, double correctResult) {
         try (MockedStatic<Horse> mockedStatic = Mockito.mockStatic(Horse.class)) {
             mockedStatic.when(() -> Horse.getRandomDouble(0.2, 0.9)).thenReturn(mockRandom);
             roach.move();
 
-            assertEquals(1.1 + 5.5 * mockRandom, roach.getDistance());
-        }
-    }
-
-    @Disabled
-    @ParameterizedTest
-    @CsvSource({
-            "0.2, 0.9",
-            "0.3, 0.8",
-            "0.0, 0.5"
-    })
-    void checkThatGetRandomDoubleCalculatedCorrectly(double min, double max) {
-        try (MockedStatic<Horse> mockedStatic = Mockito.mockStatic(Horse.class)) {
-            mockedStatic.when(() -> Math.random()).thenReturn(0.2);
-            double result = Horse.getRandomDouble(min, max);
-
-            assertEquals((0.2 * (max - min)) + min, result);
+            assertEquals(correctResult, roach.getDistance());
         }
     }
 }
